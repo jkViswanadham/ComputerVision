@@ -1,0 +1,106 @@
+<html>
+<script src="/lib/js/jquery.js"></script>
+<script src="/lib/js/d3.v5.min.js"></script>
+<body>
+
+<div id="OriginalImage" style="width:30%;position:inline-block;float:left"></div>
+
+<div style="width:30%;position:inline-block;float:left">
+<div id="Multiplication" ></div>
+<div id="nextcell" style="width:2%;position:inline-block;clear:both"> ClickForNextStep</div>
+<div id="calculation"></div>
+
+</div>
+
+
+
+<div id="TransformedImage" style="width:30%;position:inline-block;float:left"></div>
+
+
+
+
+</body>
+
+<script>
+
+ImageArray=$.map($(Array(81)),function(val, i) { if(i%9==2){return 1} else{return 0}; })
+Filter = $.map($(Array(9)),function(val, i) { if(i==3) {return 1} return 0; })
+
+
+minno = 0
+minno_arry = [minno,minno+1,minno+2,minno+9,minno+10,minno+11,minno+18,minno+19,minno+20]
+
+arr2 = minno_arry.map(i => ImageArray[i]);
+
+$("#nextcell").click(function(){
+
+	if(minno == 0)
+	{TransformedImage.selectAll("text").text("")}
+
+	Heighlight.selectAll("*").remove();
+	Heighlight.append("rect").attr("id","heighlightcell").attr("x", (minno%9)*20+2 ).attr("y",Math.floor(minno/9)*20 + 2  ).attr("width",62).attr("height",62).attr("stroke","red").attr("fill","none").attr("stroke-width","5px")
+
+	OriginalImage.selectAll("text").attr("font-weight","normal")
+	minno_arry = [minno,minno+1,minno+2,minno+9,minno+10,minno+11,minno+18,minno+19,minno+20]
+	OriginalImage.selectAll("text").filter(function(i,d){return minno_arry.includes(d) }).attr("font-weight","bold")
+
+
+	
+	arr2 = minno_arry.map(i => ImageArray[i]);
+	var t = ""
+	result = Filter.reduce(function(r,a,i){if(i%3==0 & i !=0){t = t +"<br>"} t = t +" +  "+ a*arr2[i] ;return r+a*arr2[i]},0)
+
+	
+	TransformedImage.select("#result_"+(minno+10)).text(result)
+ 
+    $("#calculation").html(t)
+	
+	minno = minno + 1
+	if(minno % 9 == 7){minno = minno + 2}
+	if(minno == 63){minno = 0}
+
+	})
+
+
+OriginalImage = d3.select("#OriginalImage").append("svg").attr("width",200).attr("height",300);
+
+
+OriginalImage.append("g").attr("transform","translate(5,5)").selectAll("rect").data(ImageArray).enter().append("rect")
+	.attr("x",function(i,d){ return((d%9)*20) }).attr("y",function(i,d){ return(Math.floor(d/9)*20) })
+	.attr("width",20).attr("height",20).attr("fill","green")
+	.attr("stroke","black").attr("id",function(i,d){return "rect_"+d})
+
+OriginalImage.append("g").selectAll("text").data(ImageArray).enter().append("text").attr("id",function(i,d){return "text_"+d})
+	.attr("x",function(i,d){ return((d%9)*20) + 10 })
+	.attr("y",function(i,d){ return(Math.floor(d/9)*20 + 20) }).text(function(d){return(d)})
+
+
+MultiplicationImage = d3.select("#Multiplication").append("svg").attr("width",200).attr("height",100);
+
+
+MultiplicationImage.append("g").selectAll("rect").data(Filter).enter().append("rect")
+.attr("x",function(i,d){ return((d%3)*20) })
+.attr("y",function(i,d){ return(Math.floor(d/3)*20) })
+.attr("width",20).attr("height",20).attr("fill","green")
+.attr("stroke","black").attr("id",function(i,d){return "rect_"+d})
+
+MultiplicationImage.append("g").selectAll("text").data(Filter).enter().append("text").attr("x",function(i,d){ return((d%3)*20) + 5 }).attr("y",function(i,d){ return(Math.floor(d/3)*20 + 15) }).text(function(d){return d})
+
+
+Heighlight = OriginalImage.append("g")
+
+
+TransformedImage = d3.select("#TransformedImage").append("svg").attr("width",200).attr("height",300);
+TransformedImage.append("g").attr("transform","translate(5,5)").selectAll("rect").data(ImageArray).enter().append("rect")
+.attr("x",function(i,d){ return((d%9)*20) }).attr("y",function(i,d){ return(Math.floor(d/9)*20) })
+.attr("width",20).attr("height",20).attr("fill","green")
+.attr("stroke","black")
+
+TransformedImage.append("g").selectAll("text").data(ImageArray).enter().append("text").attr("id",function(i,d){return "result_"+d})
+.attr("x",function(i,d){ return((d%9)*20) + 10 }).attr("y",function(i,d){ return(Math.floor(d/9)*20 + 20) }).text("")
+
+
+</script>
+
+
+</html>
