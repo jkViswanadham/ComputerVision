@@ -58,6 +58,8 @@ I31 * W31 + I32 * W32 + I33 *W33 <br>
 <select id="Convolution">
 <option value = "3"> Shift Right</option>
 <option value = "5"> Shift Left</option>
+<option value = "1"> Shift Bottom</option>
+<option value = "7"> Shift Top</option>
 </select>
 </div>
 
@@ -93,7 +95,7 @@ updateMultiplicationImage();
 
 })
 
-ImageArray=$.map($(Array(81)),function(val, i) { if(i%9==2){return 1} else{return 0}; })
+ImageArray=$.map($(Array(81)),function(val, i) { if(i%9==2 | (i < 50 & i >= 36)){return 1} else{return 0}; })
 IndexArray=$.map($(Array(10)),function(val, i) { return i })
 Filter = $.map($(Array(9)),function(val, i) { if(i==3) {return 1} return 0; })
 
